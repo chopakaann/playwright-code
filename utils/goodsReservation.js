@@ -23,3 +23,19 @@ export async function clickButtonAddGoodsToBasketInProductList(page) {
    
     await page.locator('[data-cy="button-add-goods-to-basket"]').click();
 }
+
+export async function clickReserveButtonInSaleSummaries(page){
+
+    await page.locator('[data-cy="salesummaries-reserve-button"]').click();
+}
+
+export async function clickButtonNextInViewPDFPage(page){
+
+    await page.locator('[data-cy="van-shipping-goods-reservation-request"]').click();
+}
+
+
+export async function clickButtonConfirmModalInSaleSummaries(page){
+
+    await page.locator('[data-cy="confirm-modal-confirm-button"]').click();
+}

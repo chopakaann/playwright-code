@@ -13,9 +13,16 @@ test('Go back after create GoodsReservation', async ({ page }) => {
     await loginGoodsReservationEnvDev(page, "DEMO0017", "DEMO0017");
     await goods.clickButtonVanShipingCreate(page);
 
-    await goods.clickIncreaseSaleUnitInProductList('0','10');
-    // await goodsReservation.clickIncreaseSaleUnitInProductList('0','5');
-    await goods.clickButtonAddGoodsToBasketInProductList();
-    // await page.locator(`[data-cy="button-increase-saleunit-0"]`).dblclick();
+    await goods.clickIncreaseSaleUnitInProductList(page,'0','1');
+    await goods.clickIncreaseSaleUnitInProductList(page,'0','5');
+    await goods.clickButtonAddGoodsToBasketInProductList(page);
+    await goods.clickReserveButtonInSaleSummaries(page);
+    await goods.clickButtonConfirmModalInSaleSummaries(page);
+
+    await goods.clickButtonNextInViewPDFPage(page);
+    await goods.clickBackInProductList(page);
+
+    
+
 });
 
