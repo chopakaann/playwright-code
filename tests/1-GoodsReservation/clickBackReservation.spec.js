@@ -1,20 +1,24 @@
 import { test, expect } from '@playwright/test';
-import { loginGoodsReservationEnvDev  } from '../utils/login';
-import *  as goods from '../utils/goodsReservation'; 
-import userCVM from '../dataJson/userLogin.json';
+import { loginGoodsReservationEnvDev  } from '../../utils/login';
+import *  as goods from '../../utils/goodsReservation'; 
+import userCVM from '../../dataJson/userLogin.json';
+import environment from '../../dataJson/environment.json';
+const Mongo = require('../../database/mongo');  // ไปที่โฟลเดอร์ database
 
 
-// let env = "sit"
-let user = userCVM.cvm.user
+let env = environment;
+let user = userCVM.cvm.user;
 
-// test.beforeAll(async () => {
-//     console.log("🔄 Initializing database cleanup...");
-//     await mongo.cleanup(env, user);
-// });
+
+test.beforeAll(async () => {
+    let mongo = new Mongo(env, user);  // You can pass 'sit' and employeeId or any employeeIds
+    await mongo.connect();  // Connect to MongoDB
+    console.log("Database connected!");
+    await mongo.cleanup();  
+  });
 
 test('Go back', async ({ page }) => {
     await loginGoodsReservationEnvDev(page, user, user);
-
     await goods.clickBackInProductList(page);
 });
 
@@ -29,9 +33,7 @@ test('Go back after create GoodsReservation', async ({ page }) => {
     await goods.clickButtonConfirmModalInSaleSummaries(page);
 
     await goods.clickButtonNextInViewPDFPage(page);
-    await goods.clickBackInProductList(page);
-
-    
+    await goods.clickBackInProductList(page);  
 
 });
 
