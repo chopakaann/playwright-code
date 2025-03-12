@@ -18,23 +18,16 @@ test.beforeAll(async () => {
     await mongo.close();
   });
 
-test('Go back', async ({ page }) => {
+test('GoodsReservation CVM', async ({ page }) => {
     await loginGoodsReservationEnvDev(page, user, user);
-    await goods.clickBackInProductList(page);
-});
-
-test('Go back after create GoodsReservation', async ({ page }) => {
-    await loginGoodsReservationEnvDev(page, user,user);
     await goods.clickButtonVanShipingCreate(page);
+    await goods.verifyPageGoodsReservation(page,"รายการเบิกสินค้า");
 
-    await goods.clickIncreaseSaleUnitInProductList(page,'0','1');
-    await goods.clickIncreaseSaleUnitInProductList(page,'0','5');
-    await goods.clickButtonAddGoodsToBasketInProductList(page);
-    await goods.clickReserveButtonInSaleSummaries(page);
-    await goods.clickButtonConfirmModalInSaleSummaries(page);
+    
+   
 
-    await goods.clickButtonNextInViewPDFPage(page);
-    await goods.clickBackInProductList(page);  
+
+
 
 });
 

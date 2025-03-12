@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test';
+import { trimAndCheck, checkTrimmedText} from '../utils/utils';
 
 export  const clickBackInProductList = async (page) =>{
 
@@ -8,6 +9,7 @@ export  const clickBackInProductList = async (page) =>{
 
 
 export const  clickButtonVanShipingCreate = async (page)=> {
+    await page.waitForSelector('[data-cy="van-shipping-goods-reservation-request"]', { visible: true, timeout: 10000 });
     await page.locator('[data-cy="van-shipping-goods-reservation-request"]').click();
 }
 
@@ -38,4 +40,15 @@ export const clickButtonNextInViewPDFPage = async (page) =>{
 export const clickButtonConfirmModalInSaleSummaries = async (page)=>{
 
     await page.locator('[data-cy="confirm-modal-confirm-button"]').click();
+}
+
+export const verifyPageGoodsReservation = async (page,text)=>{
+    let headerTitle = await page.locator('[data-cy="header-title"]').textContent();
+    console.log(headerTitle);
+
+    let trimHeaderTitle = headerTitle.trim();
+    let trimExpectTitle = text.trim();
+
+    expect(trimHeaderTitle).toBe(trimExpectTitle);
+    
 }
