@@ -1,0 +1,19 @@
+{
+    
+    "cvm": {
+        "user": "DEMO0017",
+        "pass":"DEMO0017",
+        "contactId": 961069
+    },
+    "ssc": {
+        "user": "DEMO0019",
+        "pass":"DEMO0019",
+        "contactId": 961070
+    },
+    "ssc_cvm": {
+        "user": "DEMO0018",
+        "pass":"DEMO0018",
+        "contactId": 961071
+    }
+
+}

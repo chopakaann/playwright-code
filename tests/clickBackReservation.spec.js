@@ -1,16 +1,25 @@
 import { test, expect } from '@playwright/test';
 import { loginGoodsReservationEnvDev  } from '../utils/login';
 import *  as goods from '../utils/goodsReservation'; 
+import userCVM from '../dataJson/userLogin.json';
 
+
+// let env = "sit"
+let user = userCVM.cvm.user
+
+// test.beforeAll(async () => {
+//     console.log("🔄 Initializing database cleanup...");
+//     await mongo.cleanup(env, user);
+// });
 
 test('Go back', async ({ page }) => {
-    await loginGoodsReservationEnvDev(page, "DEMO0017", "DEMO0017");
+    await loginGoodsReservationEnvDev(page, user, user);
 
     await goods.clickBackInProductList(page);
 });
 
 test('Go back after create GoodsReservation', async ({ page }) => {
-    await loginGoodsReservationEnvDev(page, "DEMO0017", "DEMO0017");
+    await loginGoodsReservationEnvDev(page, user,user);
     await goods.clickButtonVanShipingCreate(page);
 
     await goods.clickIncreaseSaleUnitInProductList(page,'0','1');

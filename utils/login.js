@@ -12,7 +12,9 @@ export async function loginGoodsReservationEnvDev(page, user, password) {
     });
 
     console.log(token);
-    const urlWithToken = `https://sit.imaginic.dev/?accessToken=${token}`;
+    // const urlWithToken = `https://sit.imaginic.dev/?accessToken=${token}`;
+    const urlWithToken =`https://sit-device-uat.thaibevapp.com/?accessToken=${token}`;
+
     console.log(urlWithToken);
 
     await page.goto(urlWithToken);  
