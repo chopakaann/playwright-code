@@ -11,8 +11,8 @@ let user = userCVM.cvm.user;
 
 
 test.beforeAll(async () => {
-    let mongo = new Mongo(env, user);  // You can pass 'sit' and employeeId or any employeeIds
-    await mongo.connect();  // Connect to MongoDB
+    let mongo = new Mongo(env, user);  
+    await mongo.connect();  
     console.log("Database connected!");
     await mongo.cleanup();  
     await mongo.close();

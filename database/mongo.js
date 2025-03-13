@@ -84,5 +84,5 @@ class Mongo {
     }
 }
 
-module.exports = Mongo;  // ส่งออกคลาส Mongo
+module.exports = Mongo;  
 
