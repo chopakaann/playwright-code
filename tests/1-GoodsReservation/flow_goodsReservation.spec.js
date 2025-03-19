@@ -10,6 +10,7 @@ let env = environment;
 let user = userCVM.cvm.user;
 let qtySaleUnit = '10';
 
+
 test.beforeAll(async () => {
     let mongo = new Mongo(env, user);  
     await mongo.connect();  
@@ -36,19 +37,31 @@ test('GoodsReservation CVM', async ({ page }) => {
     await goods.clicktextPriceInProductList(page);
     await goods.clickButtonAddGoodsToBasketInProductList(page);
 
-    
-
+    console.log('log','verify product list in summaries page');
+    await goods.verifyProductNameInSalesummaries(page, '0','1.หงส์ทอง 35 ดีกรี 350 ml (แสงโสม)' );
+    await goods.verifyQuatitySaleUnitInSaleSummaries(page, '0', qtySaleUnit);
+    await goods.verifyQuatityBaseUnitInSaleSummaries(page, '0', '0');
 
 
     const currentUrl = page.url();
     const goodsReservationID = currentUrl.split('/').pop();
     console.log(`Extracted ID: ${goodsReservationID}`); 
 
-    console.log('log','verify product list in summaries page');
-    await goods.verifyProductNameInSalesummaries(page, '0','1.หงส์ทอง 35 ดีกรี 350 ml (แสงโสม)' );
-    await goods.verifyQuatitySaleUnitInSaleSummaries(page, '0', qtySaleUnit);
-    await goods.verifyQuatityBaseUnitInSaleSummaries(page, '0', '0');
     await goods.clickReserveButtonInSaleSummaries(page);
+    await goods.clickButtonConfirmModalInSaleSummaries(page);
+    await goods.clickButtonNextInViewPDFPage(page);
+
+
+
+
+    const goodsReservationText = await page.locator(`[data-cy="van-shipping-goods-reservation-id-0"]`).textContent();
+    console.log (goodsReservationText);
+    let goodsReservationDocumentNumber = goodsReservationText.split('| สถานะ : ')[0].trim();
+    const goodsReservationStatus = goodsReservationText.split('| สถานะ : ')[1].trim();
+    console.log (goodsReservationDocumentNumber);
+    console.log (goodsReservationStatus);
+
+    await goods.verifyStatusInGoodsReservationList(page, 0,goodsReservationStatus);
 
     
 

@@ -50,3 +50,40 @@ export async function loading(page, limit = 100000) {
     console.log('loading');
     await page.locator('[data-cy="loading"]').waitFor({ state: 'detached', timeout: limit });
 }
+
+
+export async function loginSaleOrderEnvDev(page, user, password) {
+    await loginTechServPortal(page, user, password);
+    
+    await page.waitForSelector('#techserv-abbrev-name-219', { timeout: 20000 });
+    
+    const token = await page.evaluate(() => {
+        return JSON.parse(localStorage.getItem('techserv-oauth-user:https://oatdev.thaibevapp.com:42E6EC86-ABCE-49C2-BD13-B45F63E71951')).access_token;
+    });
+
+    console.log(token);
+    const urlWithToken = `https://sit.imaginic.dev/?accessToken=${token}`;
+    console.log(urlWithToken);
+
+    // 🚀 สร้าง Context ใหม่พร้อม GPS
+    const context = await page.context();
+    await context.grantPermissions(['geolocation']); // ✅ ให้สิทธิ์ใช้ GPS
+    await context.setGeolocation({ latitude: 13.7563, longitude: 100.5018 });
+
+    await page.goto(urlWithToken);  
+    await selectOrganization(page);  
+    
+    await page.locator('[data-cy="today-activity-item-0"]').waitFor({ state: 'visible', timeout: 20000 });
+    await page.click('[data-cy="today-activity-item-0"]');
+
+    // // ✅ ตรวจสอบว่า GPS ถูกตั้งค่าแล้ว
+    // const gps = await context.geolocation();
+    // console.log("📍 GPS Location:", gps);
+
+    await page.click('[data-cy="menu-take-order"]');
+    await page.click('[data-cy="take-order-cash"]');
+}
+
+
+
+

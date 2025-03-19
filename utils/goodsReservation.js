@@ -121,3 +121,10 @@ export const verifyQuatityBaseUnitInSaleSummaries = async (page, row, qtyBaseUni
     console.log(value);
     expect(value).toBe(qtyBaseUnit); 
 }
+
+export const verifyStatusInGoodsReservationList = async (page, row, id ) => {
+    await expect(page.locator('[data-cy="van-shipping-goods-reservation-status-'+row+'"]')).toHaveText(id);
+
+}
+
+
