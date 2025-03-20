@@ -1,10 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { loginGoodsReservationEnvDev , loginSaleOrderEnvDev } from '../../utils/login';
+import { getSalePriceProduct } from '../../utils/utils';
 import *  as goods from '../../utils/goodsReservation'; 
 import userCVM from '../../dataJson/userLogin.json';
 import environment from '../../dataJson/environment.json';
 import *  as sale from '../../utils/saleOrder'; 
 const Mongo = require('../../database/mongo');  
+// test.describe.configure({mode:'serial'});  // อันนี้ เป็นคำสัั่งที่ให้ Run เคส ต่อเนื่องกัน 
 
 
 let env = environment;
@@ -22,6 +24,7 @@ test.beforeAll(async () => {
   });
 
   test.describe.serial('Goods Reservation & Sale Order', () => {  
+   
     test('GoodsReservation CVM', async ({ page }) => {
         await loginGoodsReservationEnvDev(page, user, user);
         await goods.clickButtonVanShipingCreate(page);
@@ -78,10 +81,28 @@ test.beforeAll(async () => {
 
         await loginSaleOrderEnvDev(page, user, user);
 
+        console.log('verify search product code not found');
         await sale.inputTextSearch(page, '11111');
         await sale.clickButtonSearch(page);
-    
         await sale.verifyEmptyProduct(page, 'ไม่พบข้อมูล');
+        
+        console.log('verify search product name not found');
+        await sale.clearInputProductSerach(page);
+        await sale.inputTextSearch(page, 'Sing');
+        await sale.clickButtonSearch(page);
+        await sale.verifyEmptyProduct(page, 'ไม่พบข้อมูล');
+
+        await sale.clearInputProductSerach(page);
+        await sale.inputTextSearch(page, 'หงส์ทอง 35 ดีกรี 350 ml (แสงโสม)');
+        await sale.clickButtonSearch(page);
+      
+        let qty = '10';
+        await sale.inputQuantitySaleUnit(page, qty);
+
+   
+        const formattedTotalPrice = await getSalePriceProduct(page, 0, qty);
+        console.log('Total Sale Price:', formattedTotalPrice);
+
 
     } )
 

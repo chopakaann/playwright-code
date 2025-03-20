@@ -12,3 +12,18 @@ export const checkTrimmedText = (selector, expectedText) => {
     });
 };
 
+export const getSalePriceProduct = async (page, index, qty) => {
+    const text = await page.locator(`[data-cy="text-include-vat-saleunit-price-${index}"]`).textContent();
+    if (!text) return '0.00'; 
+
+    const price = convertStringToNumber(text);
+    const totalPrice = (price * qty).toFixed(2);
+    return parseFloat(totalPrice).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+
+
+
+
+export const convertStringToNumber =( text) => {
+    return Number(text.replaceAll(',', ''));
+};
