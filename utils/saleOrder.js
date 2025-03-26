@@ -39,3 +39,26 @@ export const inputQuantitySaleUnit = async (page, qty) => {
     await inputField.fill(qty.toString()); 
     await inputField.blur(); 
 }
+export const verifyFooterandTotalAmount = async (page,  totalAmount) => {
+    const summaryAmount = await page.locator('[data-cy="summary-amount"]');
+    await expect(summaryAmount).toHaveText(totalAmount);
+}
+
+export const clickButtonTakeOrder = async (page)=>{
+    await page.locator('[data-cy="bt-take-order"]').click();
+}
+
+export const verifyOrderDetailInSummaryPage = async (page, index, productName, qty, unit, amount) => {
+    console.log('verifyOrderDetailInSummaryPage');
+    const input = await page.waitForSelector(`[data-cy="order-amount-${index}"]`, { visible: true, timeout: 10000 });
+    await expect(page.locator(`[data-cy="order-item-name-${index}"]`)).toHaveText(productName);
+    await expect(page.locator(`[data-cy="order-quantity-${index}"]`)).toHaveText(qty);
+    await expect(page.locator(`[data-cy="order-unit-${index}"]`)).toHaveText(` ${unit}`);
+    // await expect(page.locator(`[data-cy="order-amount-${index}"]`)).toHaveText(` ${amount} `);
+}
+export const inputQuantityBaseUnit = async (page, qty) => {
+    console.log('inputQuantityBaseUnit');
+    const inputField = page.locator('[data-cy="input-number-baseunit-0"]');
+    await inputField.fill(qty.toString()); 
+    await inputField.blur(); 
+}

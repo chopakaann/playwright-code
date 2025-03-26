@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { loginGoodsReservationEnvDev , loginSaleOrderEnvDev } from '../../utils/login';
-import { getSalePriceProduct } from '../../utils/utils';
+import { getSalePriceProduct, getBasePriceProduct ,convertStringToNumber  } from '../../utils/utils';
 import *  as goods from '../../utils/goodsReservation'; 
 import userCVM from '../../dataJson/userLogin.json';
 import environment from '../../dataJson/environment.json';
@@ -12,6 +12,7 @@ const Mongo = require('../../database/mongo');
 let env = environment;
 let user = userCVM.cvm.user;
 let qtySaleUnit = '500';
+let productName = 'หงส์ทอง 35 ดีกรี 350 ml (แสงโสม)';
 
 
 
@@ -36,7 +37,7 @@ test.beforeAll(async () => {
         await goods.verifyPageGoodverifyIncludeVatSaleunitPriceInProductListsReservation(page, 0, '60.00');
 
         await goods.selectProductCategoryInProductList(page,'BrownSpirits');
-        await goods.inputSearchProductInProductList(page,'หงส์ทอง 35 ดีกรี 350 ml (แสงโสม)');
+        await goods.inputSearchProductInProductList(page,productName);
         await goods.clickButtonSearchProductInProductList(page);
 
         await goods.inputQuantitySaleUnitInProductList(page,0, qtySaleUnit);
@@ -44,7 +45,7 @@ test.beforeAll(async () => {
         await goods.clickButtonAddGoodsToBasketInProductList(page);
 
         console.log('log','verify product list in summaries page');
-        await goods.verifyProductNameInSalesummaries(page, '0','1.หงส์ทอง 35 ดีกรี 350 ml (แสงโสม)' );
+        await goods.verifyProductNameInSalesummaries(page, '0','1.'+ productName );
         await goods.verifyQuatitySaleUnitInSaleSummaries(page, '0', qtySaleUnit);
         await goods.verifyQuatityBaseUnitInSaleSummaries(page, '0', '0');
 
@@ -93,15 +94,33 @@ test.beforeAll(async () => {
         await sale.verifyEmptyProduct(page, 'ไม่พบข้อมูล');
 
         await sale.clearInputProductSerach(page);
-        await sale.inputTextSearch(page, 'หงส์ทอง 35 ดีกรี 350 ml (แสงโสม)');
+        await sale.inputTextSearch(page, productName);
         await sale.clickButtonSearch(page);
       
-        let qty = '10';
-        await sale.inputQuantitySaleUnit(page, qty);
+        let blendSaleQty = '10';
+        let blendBaseQty = '5';
+        await sale.inputQuantitySaleUnit(page, blendSaleQty);
+        await sale.inputQuantityBaseUnit(page,blendBaseQty);
 
    
-        const formattedTotalPrice = await getSalePriceProduct(page, 0, qty);
-        console.log('Total Sale Price:', formattedTotalPrice);
+        const priceSaleBlend = convertStringToNumber(await getSalePriceProduct(page, 0, blendSaleQty));
+        console.log('Total Sale Price:', priceSaleBlend);
+        const prictBaseBlend = convertStringToNumber(await getBasePriceProduct(page, 0, blendBaseQty ));
+        console.log('total Base Price' , prictBaseBlend);
+
+        const totalAmount = (priceSaleBlend + prictBaseBlend).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); 
+      
+        console.log ('Total Amount', totalAmount)
+
+        await sale.verifyFooterandTotalAmount(page, totalAmount);
+        await page.waitForTimeout(5000);
+        await sale.clickButtonTakeOrder(page);
+
+        await page.waitForTimeout(5000);
+        await sale.verifyOrderDetailInSummaryPage(page,0, productName, blendSaleQty,"โหล",priceSaleBlend.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+
+
+
 
 
     } )

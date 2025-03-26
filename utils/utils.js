@@ -21,9 +21,20 @@ export const getSalePriceProduct = async (page, index, qty) => {
     return parseFloat(totalPrice).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
 
+export const getBasePriceProduct = async (page, index, qty) => {
+    const text = await page.locator(`[data-cy="text-include-vat-baseunit-price-${index}"]`).textContent();
+    if (!text) return '0.00'; 
+
+    const price = convertStringToNumber(text);
+    const totalPrice = (price * qty).toFixed(2);
+    return parseFloat(totalPrice).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+
 
 
 
 export const convertStringToNumber =( text) => {
     return Number(text.replaceAll(',', ''));
 };
+
+
