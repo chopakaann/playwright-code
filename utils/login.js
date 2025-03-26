@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 
-export async function loginGoodsReservationEnvDev(page, user, password) {
+export async function loginGoodsReservation(page, environment,user, password) {
     await loginTechServPortal(page, user, password);
     
     await page.waitForSelector('#techserv-abbrev-name-219', { timeout: 20000 });
@@ -12,8 +12,18 @@ export async function loginGoodsReservationEnvDev(page, user, password) {
     });
 
     console.log(token);
-    const urlWithToken = `https://sit.imaginic.dev/?accessToken=${token}`;
-    console.log(urlWithToken);
+
+    let urlWithToken; // ประกาศตัวแปรก่อนเข้า if-else
+
+    if (environment === "dev") {
+        console.log(`Environment: ${environment}`);
+        urlWithToken = `https://sit.imaginic.dev/?accessToken=${token}`;
+    } else if (environment === "sit") {
+        urlWithToken = `https://sit-device-uat.thaibevapp.com/?accessToken=${token}`;
+    } else {
+        console.log(`Environment: ${environment}`);
+        throw new Error('Invalid environment specified');
+    }
 
     await page.goto(urlWithToken);  
     await selectOrganization(page);  
@@ -52,7 +62,7 @@ export async function loading(page, limit = 100000) {
 }
 
 
-export async function loginSaleOrderEnvDev(page, user, password) {
+export async function loginSaleOrderEnv(page, environment,user, password) {
     await loginTechServPortal(page, user, password);
     
     await page.waitForSelector('#techserv-abbrev-name-219', { timeout: 20000 });
@@ -62,8 +72,17 @@ export async function loginSaleOrderEnvDev(page, user, password) {
     });
 
     console.log(token);
-    const urlWithToken = `https://sit.imaginic.dev/?accessToken=${token}`;
-    console.log(urlWithToken);
+    let urlWithToken; // ประกาศตัวแปรก่อนเข้า if-else
+
+    if (environment === "dev") {
+        console.log(`Environment: ${environment}`);
+        urlWithToken = `https://sit.imaginic.dev/?accessToken=${token}`;
+    } else if (environment === "sit") {
+        urlWithToken = `https://sit-device-uat.thaibevapp.com/?accessToken=${token}`;
+    } else {
+        console.log(`Environment: ${environment}`);
+        throw new Error('Invalid environment specified');
+    }
 
     // 🚀 สร้าง Context ใหม่พร้อม GPS
     const context = await page.context();
@@ -76,14 +95,8 @@ export async function loginSaleOrderEnvDev(page, user, password) {
     await page.locator('[data-cy="today-activity-item-0"]').waitFor({ state: 'visible', timeout: 20000 });
     await page.click('[data-cy="today-activity-item-0"]');
 
-    // // ✅ ตรวจสอบว่า GPS ถูกตั้งค่าแล้ว
-    // const gps = await context.geolocation();
-    // console.log("📍 GPS Location:", gps);
-
     await page.click('[data-cy="menu-take-order"]');
     await page.click('[data-cy="take-order-cash"]');
 }
-
-
 
 

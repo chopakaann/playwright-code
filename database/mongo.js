@@ -19,11 +19,16 @@ class Mongo {
         // Databases
         this.retailDatabase =
         this.env == appEnv.sit ? "nsi_retail_sit" : "nsi_retail";
+        this.env == appEnv.sit ? "nsi_sale_order_sit" : "nsi_sale_order";
+        this.env == appEnv.sit ? "nsi_payment_sit" : "nsi_payment";
 
         // Collections
         this.goodsReservationsCollection = "goods_reservations";   
         this.contactsCollection = "contacts";  
         this.vehicleStocksCollection = "vehicle_stocks"; 
+        this.saleOrderCollection = "sales_orders"; 
+        this.receiptCollection = "receipts"; 
+        this.paymentsCollection = "payments";
     }
 
 

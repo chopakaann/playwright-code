@@ -1,15 +1,15 @@
 import { test, expect } from '@playwright/test';
-import { loginGoodsReservationEnvDev , loginSaleOrderEnvDev } from '../../utils/login';
+import { loginGoodsReservation , loginSaleOrderEnv  } from '../../utils/login';
 import { getSalePriceProduct, getBasePriceProduct ,convertStringToNumber  } from '../../utils/utils';
 import *  as goods from '../../utils/goodsReservation'; 
 import userCVM from '../../dataJson/userLogin.json';
 import environment from '../../dataJson/environment.json';
 import *  as sale from '../../utils/saleOrder'; 
 const Mongo = require('../../database/mongo');  
-// test.describe.configure({mode:'serial'});  // อันนี้ เป็นคำสัั่งที่ให้ Run เคส ต่อเนื่องกัน 
+//test.describe.configure({mode:'serial'});  // อันนี้ เป็นคำสัั่งที่ให้ Run เคส ต่อเนื่องกัน 
 
 
-let env = environment;
+let env = environment.environmentTest;
 let user = userCVM.cvm.user;
 let qtySaleUnit = '500';
 let productName = 'หงส์ทอง 35 ดีกรี 350 ml (แสงโสม)';
@@ -18,16 +18,18 @@ let productName = 'หงส์ทอง 35 ดีกรี 350 ml (แสงโ
 
 test.beforeAll(async () => {
     let mongo = new Mongo(env, user);  
+    console.log(`Environment: ${env}`);
     await mongo.connect();  
     console.log("Database connected!");
     await mongo.cleanup();  
     await mongo.close();
   });
 
-  test.describe.serial('Goods Reservation & Sale Order', () => {  
+   test.describe.serial('Goods Reservation & Sale Order', () => {  
    
     test('GoodsReservation CVM', async ({ page }) => {
-        await loginGoodsReservationEnvDev(page, user, user);
+  
+        await loginGoodsReservation  (page,  env, user, user);
         await goods.clickButtonVanShipingCreate(page);
 
         console.log('log :verify page product list');
@@ -70,17 +72,11 @@ test.beforeAll(async () => {
 
         await goods.verifyStatusInGoodsReservationList(page, 0,goodsReservationStatus);
 
-        
-
-
-
-
-
     });
 
     test('Sale Order ', async ({page}) => { 
 
-        await loginSaleOrderEnvDev(page, user, user);
+        await loginSaleOrderEnv(page, env,user, user);
 
         console.log('verify search product code not found');
         await sale.inputTextSearch(page, '11111');
@@ -113,13 +109,30 @@ test.beforeAll(async () => {
         console.log ('Total Amount', totalAmount)
 
         await sale.verifyFooterandTotalAmount(page, totalAmount);
-        await page.waitForTimeout(5000);
-        await sale.clickButtonTakeOrder(page);
 
-        await page.waitForTimeout(5000);
+        await sale.clickButtonTakeOrder(page);
         await sale.verifyOrderDetailInSummaryPage(page,0, productName, blendSaleQty,"โหล",priceSaleBlend.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 
+        await sale.clickButtonPayment(page);
+        await sale.clickButtonPaymentByCash(page);
 
+        await sale.clickButtonConfirmPayment(page);
+        await sale.verifyModalConfirmPayment(page,"คุณต้องการยืนยันการชำระเงินหรือไม่");
+        await sale.clickConfirmInModalConfirmPayment(page);
+
+        console.log ('verify page summary');
+        await sale.verifyHeaderTitle(page,"สรุปการชำระเงิน");
+        await sale.verifyHeaderInListPaymentDetail(page,"รายการชำระเงิน");
+
+        await sale.clickButtonPrintTaxInvoice(page, "พิมพ์ใบเสร็จ");
+
+        await sale.clickButtonHomePageTaxInvoice(page);
+        await sale.clickConfirmGotoHomePage(page);
+
+        await sale.verifyRedirectBacktoToDoListSaleInt(page, env);
+
+
+        
 
 
 
